@@ -154,7 +154,7 @@ NAMED_FUNCTIONS = {'weekends': is_weekend,
                    'months': is_month,
                    'before': before,
                    'after': after,
-
+                   'dayofweek': specific_weekday,
         }
 
 # Cell
