@@ -60,6 +60,20 @@ class Day(BaseModel):
         checks = [p.during(ts) for p in self.periods if p.status==status]
         return sum(checks) >= 1
 
+    def get_all_status(self):
+        statuses = [period.status for period in self.periods]
+        return list(dict.fromkeys(statuses))
+
+    def get_status(self, ts):
+        '''
+        Returns the status of the time ts given or None if it is not within any of the periods.
+        '''
+        for status in self.get_all_status():
+            if self.within_period(ts, status=status):
+                return status
+
+
+
 # Cell
 
 def always(ts):
@@ -196,6 +210,7 @@ class DayType(BaseModel):
         if self.evaluate_logic(ts):
             return self.day
 
+
 # Cell
 class IncompleteSchedule(Exception):
     pass
@@ -218,6 +233,10 @@ class Schedule(BaseModel):
     def check_status(self, ts, status):
         day = self.find_relevant_day(ts)
         if day:
-            return day.within_period(ts)
+            return day.within_period(ts, status=status)
         else:
             return False
+
+    def get_status(self, ts):
+        day = self.find_relevant_day(ts)
+        return day.get_status(ts)
