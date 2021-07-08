@@ -62,6 +62,7 @@ class Day(BaseModel):
 
     def get_all_status(self):
         statuses = [period.status for period in self.periods]
+        #remove all duplicates from the list
         return list(dict.fromkeys(statuses))
 
     def get_status(self, ts):
@@ -240,3 +241,16 @@ class Schedule(BaseModel):
     def get_status(self, ts):
         day = self.find_relevant_day(ts)
         return day.get_status(ts)
+
+    def get_all_status(self):
+        all_status = []
+        for daytype in self.daytypes:
+            all_status.extend(daytype.day.get_all_status())
+        return list(dict.fromkeys(all_status))
+
+    def check_all_status(self, ts):
+        all_status = self.get_all_status()
+        result = {}
+        for status in all_status:
+            result[status] = self.check_status(ts, status=status)
+        return result
