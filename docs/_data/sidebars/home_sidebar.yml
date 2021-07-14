@@ -9,7 +9,10 @@ entries:
     - output: web,pdf
       title: Overview
       url: /
+    - output: web,pdf
+      title: Scheduling
+      url: init.html
     output: web
-    title: repo_template
+    title: schedulebuilder
   output: web
   title: Sidebar

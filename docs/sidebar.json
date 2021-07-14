@@ -1,5 +1,6 @@
 {
-  "repo_template": {
-    "Overview": "/"
+  "schedulebuilder": {
+    "Overview": "/",
+    "Scheduling": "init.html"
   }
 }

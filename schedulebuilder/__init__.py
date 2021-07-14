@@ -2,7 +2,7 @@
 
 __all__ = ['logger', 'Period', 'Day', 'always', 'is_weekend', 'is_weekday', 'get_named_weekday', 'specific_weekday',
            'year_of', 'is_holiday', 'is_month', 'make_year_specific_date', 'before', 'after', 'NAMED_FUNCTIONS',
-           'Logic', 'DayType', 'IncompleteSchedule', 'Schedule']
+           'is_known_name', 'Logic', 'DayType', 'IncompleteSchedule', 'Schedule']
 
 # Cell
 _FNAME='init'
@@ -158,23 +158,26 @@ NAMED_FUNCTIONS = {'weekends': is_weekend,
         }
 
 # Cell
+
+def is_known_name(logic_string):
+    if logic_string not in NAMED_FUNCTIONS:
+        raise ValueError("logic must be one of {}".format(NAMED_FUNCTIONS.keys()))
+    return logic_string
+
 class Logic(BaseModel):
-    include: Optional[str]
-    exclude: Optional[str]
+    select:str
+    exclude: Optional[bool]
     kwargs: Optional[dict]={}
 
-    @validator('include')
-    @validator('exclude')
-    def func_must_be_a_known_name(cls, logic_string):
-        if logic_string not in NAMED_FUNCTIONS:
-            raise ValueError("logic must be one of {}".format(NAMED_FUNCTIONS.keys()))
-        return logic_string
+    @validator('select')
+    def must_be_a_known_name(cls, logic_string):
+        return is_known_name(logic_string)
 
     def evaluate(self, ts) -> bool:
         '''
         Returns True if the function named in self.func evaluates to true
         '''
-        func_name = self.include or self.exclude
+        func_name = self.select
         func = NAMED_FUNCTIONS[func_name]
         result = func(ts, **self.kwargs)
         if self.exclude:
