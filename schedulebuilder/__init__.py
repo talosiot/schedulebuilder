@@ -32,12 +32,21 @@ class Period(BaseModel):
         '''
         ts: a timestamp. Can be a datetime or any other obj with a .time() method.
         If no .time method exists, ts can also be any object that can be compared with datetime.time objects
+
+        This comparison is done without regard to timezone.
+        i.e 08:00-0400 is the same as 08:00-00 is the same as 08:00+1200
+
+        You should always pass in a timezone-aware time in the timezone of the building.
+        This removes the ambiguity.
         '''
+        #special 24hr logic
+        if self.start==self.end:
+            return True
+
         try:
             tod = ts.time()
         except AttributeError:
             tod=ts
-        #end needs to be <= to allow for a 24 hour day
         return self.start <= tod <= self.end
 
 
